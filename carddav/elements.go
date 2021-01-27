@@ -10,25 +10,33 @@ import (
 const namespace = "urn:ietf:params:xml:ns:carddav"
 
 var (
-	addressBookHomeSetName = xml.Name{namespace, "addressbook-home-set"}
+	addressBookHomeSetName = xml.Name{Space: namespace, Local: "addressbook-home-set"}
+	principalAddressName   = xml.Name{Space: namespace, Local: "principal-address"}
 
-	addressBookName            = xml.Name{namespace, "addressbook"}
-	addressBookDescriptionName = xml.Name{namespace, "addressbook-description"}
-	supportedAddressDataName   = xml.Name{namespace, "supported-address-data"}
-	maxResourceSizeName        = xml.Name{namespace, "max-resource-size"}
+	addressBookName            = xml.Name{Space: namespace, Local: "addressbook"}
+	addressBookDescriptionName = xml.Name{Space: namespace, Local: "addressbook-description"}
+	supportedAddressDataName   = xml.Name{Space: namespace, Local: "supported-address-data"}
+	maxResourceSizeName        = xml.Name{Space: namespace, Local: "max-resource-size"}
 
-	addressBookQueryName    = xml.Name{namespace, "addressbook-query"}
-	addressBookMultigetName = xml.Name{namespace, "addressbook-multiget"}
+	addressBookQueryName    = xml.Name{Space: namespace, Local: "addressbook-query"}
+	addressBookMultigetName = xml.Name{Space: namespace, Local: "addressbook-multiget"}
 
-	addressDataName = xml.Name{namespace, "address-data"}
+	addressDataName = xml.Name{Space: namespace, Local: "address-data"}
 )
 
-// https://tools.ietf.org/html/rfc6352#section-6.2.3
+// https://tools.ietf.org/html/rfc6352#section-7.1.1
 type addressbookHomeSet struct {
 	XMLName xml.Name      `xml:"urn:ietf:params:xml:ns:carddav addressbook-home-set"`
 	Href    internal.Href `xml:"DAV: href"`
 }
 
+// https://tools.ietf.org/html/rfc6352#section-7.1.2
+type principalAddress struct {
+	XMLName xml.Name      `xml:"urn:ietf:params:xml:ns:carddav principal-address"`
+	Href    internal.Href `xml:"DAV: href"`
+}
+
+// https://tools.ietf.org/html/rfc6352#section-6.2.1
 type addressbookDescription struct {
 	XMLName     xml.Name `xml:"urn:ietf:params:xml:ns:carddav addressbook-description"`
 	Description string   `xml:",chardata"`
@@ -40,6 +48,7 @@ type supportedAddressData struct {
 	Types   []addressDataType `xml:"address-data-type"`
 }
 
+// https://tools.ietf.org/html/rfc6352#section-6.2.2
 type addressDataType struct {
 	XMLName     xml.Name `xml:"urn:ietf:params:xml:ns:carddav address-data-type"`
 	ContentType string   `xml:"content-type,attr"`
@@ -158,12 +167,12 @@ type addressbookMultiget struct {
 }
 
 func newProp(name string, noValue bool) *internal.RawXMLValue {
-	attrs := []xml.Attr{{Name: xml.Name{namespace, "name"}, Value: name}}
+	attrs := []xml.Attr{{Name: xml.Name{Space: namespace, Local: "name"}, Value: name}}
 	if noValue {
-		attrs = append(attrs, xml.Attr{Name: xml.Name{namespace, "novalue"}, Value: "yes"})
+		attrs = append(attrs, xml.Attr{Name: xml.Name{Space: namespace, Local: "novalue"}, Value: "yes"})
 	}
 
-	xmlName := xml.Name{namespace, "prop"}
+	xmlName := xml.Name{Space: namespace, Local: "prop"}
 	return internal.NewRawXMLElement(xmlName, attrs, nil)
 }
 

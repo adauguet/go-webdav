@@ -47,7 +47,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		err = h.handleReport(w, r)
 	default:
 		b := backend{h.Backend}
-		hh := internal.Handler{&b}
+		hh := internal.Handler{Backend: &b}
 		hh.ServeHTTP(w, r)
 	}
 
@@ -142,7 +142,7 @@ func (h *Handler) handleQuery(w http.ResponseWriter, query *addressbookQuery) er
 	for _, el := range query.Filter.Props {
 		pf, err := decodePropFilter(&el)
 		if err != nil {
-			return &internal.HTTPError{http.StatusBadRequest, err}
+			return &internal.HTTPError{Code: http.StatusBadRequest, Err: err}
 		}
 		q.PropFilters = append(q.PropFilters, *pf)
 	}
@@ -336,14 +336,14 @@ func (b *backend) propfindAddressBook(propfind *internal.Propfind, ab *AddressBo
 		},
 		// TODO: this is a principal property
 		addressBookHomeSetName: func(*internal.RawXMLValue) (interface{}, error) {
-			return &addressbookHomeSet{Href: internal.Href{Path: "/"}}, nil
+			return &addressbookHomeSet{Href: internal.Href{Path: ab.HomeSet}}, nil
 		},
 		internal.PrincipalURLName: func(*internal.RawXMLValue) (interface{}, error) {
-			return &internal.PrincipalURL{Href: internal.Href{Path: "/"}}, nil
+			return &internal.PrincipalURL{Href: internal.Href{Path: ab.PrincipalURL}}, nil
 		},
 		// TODO: this should be set on all resources
 		internal.CurrentUserPrincipalName: func(*internal.RawXMLValue) (interface{}, error) {
-			return &internal.CurrentUserPrincipal{Href: internal.Href{Path: "/"}}, nil
+			return &internal.CurrentUserPrincipal{Href: internal.Href{Path: ab.CurrentUserPrincipal}}, nil
 		},
 	}
 

@@ -55,6 +55,7 @@ type Client struct {
 	ic *internal.Client
 }
 
+// NewClient creates a client.
 func NewClient(c webdav.HTTPClient, endpoint string) (*Client, error) {
 	wc, err := webdav.NewClient(c, endpoint)
 	if err != nil {
@@ -67,6 +68,7 @@ func NewClient(c webdav.HTTPClient, endpoint string) (*Client, error) {
 	return &Client{wc, ic}, nil
 }
 
+// HasSupport checks if the server support the CardDAV protocol.
 func (c *Client) HasSupport() error {
 	classes, _, err := c.ic.Options("")
 	if err != nil {
@@ -79,6 +81,7 @@ func (c *Client) HasSupport() error {
 	return nil
 }
 
+// FindAddressBookHomeSet queries the server for the home set.
 func (c *Client) FindAddressBookHomeSet(principal string) (string, error) {
 	propfind := internal.NewPropNamePropfind(addressBookHomeSetName)
 	resp, err := c.ic.PropfindFlat(principal, propfind)
@@ -102,6 +105,7 @@ func decodeSupportedAddressData(supported *supportedAddressData) []AddressDataTy
 	return l
 }
 
+// FindAddressBooks queries the server for address books.
 func (c *Client) FindAddressBooks(addressBookHomeSet string) ([]AddressBook, error) {
 	propfind := internal.NewPropNamePropfind(
 		internal.ResourceTypeName,
@@ -263,6 +267,7 @@ func decodeAddressList(ms *internal.Multistatus) ([]AddressObject, error) {
 	return addrs, nil
 }
 
+// QueryAddressBook perform an address book query.
 func (c *Client) QueryAddressBook(addressBook string, query *AddressBookQuery) ([]AddressObject, error) {
 	propReq, err := encodeAddressPropReq(&query.DataRequest)
 	if err != nil {
@@ -297,6 +302,7 @@ func (c *Client) QueryAddressBook(addressBook string, query *AddressBookQuery) (
 	return decodeAddressList(ms)
 }
 
+// MultiGetAddressBook performs a multi-get address book query.
 func (c *Client) MultiGetAddressBook(path string, multiGet *AddressBookMultiGet) ([]AddressObject, error) {
 	propReq, err := encodeAddressPropReq(&multiGet.DataRequest)
 	if err != nil {
@@ -356,6 +362,7 @@ func populateAddressObject(ao *AddressObject, resp *http.Response) error {
 	return nil
 }
 
+// GetAddressObject performs an address object query.
 func (c *Client) GetAddressObject(path string) (*AddressObject, error) {
 	req, err := c.ic.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
@@ -392,6 +399,7 @@ func (c *Client) GetAddressObject(path string) (*AddressObject, error) {
 	return ao, nil
 }
 
+// PutAddressObject performs an address object update.
 func (c *Client) PutAddressObject(path string, card vcard.Card) (*AddressObject, error) {
 	// TODO: add support for If-None-Match and If-Match
 
