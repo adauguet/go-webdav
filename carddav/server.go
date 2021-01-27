@@ -338,6 +338,9 @@ func (b *backend) propfindAddressBook(propfind *internal.Propfind, ab *AddressBo
 		addressBookHomeSetName: func(*internal.RawXMLValue) (interface{}, error) {
 			return &addressbookHomeSet{Href: internal.Href{Path: "/"}}, nil
 		},
+		internal.PrincipalURLName: func(*internal.RawXMLValue) (interface{}, error) {
+			return &internal.PrincipalURL{Href: internal.Href{Path: "/"}}, nil
+		},
 		// TODO: this should be set on all resources
 		internal.CurrentUserPrincipalName: func(*internal.RawXMLValue) (interface{}, error) {
 			return &internal.CurrentUserPrincipal{Href: internal.Href{Path: "/"}}, nil

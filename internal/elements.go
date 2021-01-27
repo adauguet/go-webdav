@@ -22,6 +22,7 @@ var (
 	GetETagName          = xml.Name{"DAV:", "getetag"}
 
 	CurrentUserPrincipalName = xml.Name{"DAV:", "current-user-principal"}
+	PrincipalURLName         = xml.Name{"DAV:", "principal-URL"}
 )
 
 type Status struct {
@@ -378,6 +379,12 @@ type CurrentUserPrincipal struct {
 	XMLName         xml.Name  `xml:"DAV: current-user-principal"`
 	Href            Href      `xml:"href,omitempty"`
 	Unauthenticated *struct{} `xml:"unauthenticated,omitempty"`
+}
+
+// https://tools.ietf.org/html/rfc3744#section-4.2
+type PrincipalURL struct {
+	XMLName xml.Name `xml:"DAV: principal-URL"`
+	Href    Href     `xml:"href,omitempty"`
 }
 
 // https://tools.ietf.org/html/rfc4918#section-14.19
